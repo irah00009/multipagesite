@@ -2,11 +2,10 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+app.set('view engine', 'html'); // Optional, since you're serving static HTML
+app.set('views', path.join(__dirname, 'views'));
 
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -25,16 +24,13 @@ app.get('/contact', (req, res) => {
 });
 
 app.get('/blog', (req, res) => {
-    fs.readFile(path.join(__dirname, 'data', 'posts.json'), 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).send('Error reading posts data');
-        }
-        const posts = JSON.parse(data);
-        res.render('blog', { posts });
-    });
+    res.sendFile(path.join(__dirname, 'views', 'blog.html'));
 });
 
+app.use('/data', express.static(path.join(__dirname, 'data')));
+
 // Start the server
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
